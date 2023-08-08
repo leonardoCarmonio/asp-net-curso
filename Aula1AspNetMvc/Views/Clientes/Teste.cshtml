@@ -1,0 +1,87 @@
+﻿@model IEnumerable<Aula1AspNetMvc.Models.Cliente>
+
+@{
+    ViewBag.Title = "Teste";
+}
+
+<!-- Não intepreta o html vindo da controller-->
+<div>@ViewBag.Ola</div>
+
+<!-- intepreta o html vindo da controller -->
+<div>@Html.Raw(ViewBag.Ola)</div>
+
+@{
+    foreach (var cliente in Model)
+    {
+        <div>@Html.Hidden("Id", cliente.Id)</div>
+
+        <div>@Html.Label("txtNome", "Nome: ", new { text = "Nome: ", @class = "control-label col-md-2" })</div>
+
+        <div>
+            @Html.TextBox("txtNome", cliente.Nome)
+            @Html.TextBoxFor(model => cliente.Nome)
+            @Html.EditorFor(model => cliente.Nome)
+        </div>
+
+        <div>@Html.TextArea("txtNome", cliente.Nome, new { rows = 5 })</div>
+
+        <div>@Html.ActionLink("Clique aqui", "Index", new { id = 1 })</div>
+
+        <!-- Injeta a tela de edição -->
+        @*<div>@Html.Action("Edit", "Clientes", new { cliente.Id })</div>*@
+
+        <div>@Html.LabelFor(model => cliente.Nome)</div>
+        <div>@Html.DisplayFor(model => cliente.Nome)</div>
+
+        <div>
+            @Html.RadioButton("corFavorita", "Azul", true) Azul
+            @Html.RadioButton("corFavorita", "Amarelo", false) Amarelo
+            @Html.RadioButton("corFavorita", "Preto", false) Preto
+        </div>
+        <div>
+            @Html.ListBox("ListaCores", new SelectList(new List<string>()
+            {
+                "Azul",
+                "Amarelo",
+                "Preto"
+            }))
+        </div>
+
+        <div>
+            @Html.DropDownList("drpListCores", new SelectList(new List<string>()
+            {
+                "Azul",
+                "Amarelo",
+                "Preto"
+            }))
+        </div>
+
+        <div>
+            @Html.DropDownListFor(c => cliente.Nome, new SelectList(Model, "id", "Nome"))
+        </div>
+
+        <div>
+            @Html.DropDownList("Id", string.Empty)
+        </div>
+
+        <div>
+            @Html.CheckBox("Certificado", false) Desejo Receber o Certificado
+        </div>
+        <div>
+            @{ 
+                // pode retornar o conteudo para uma variavel de uma view ou incluir diretamente no Html
+                var teste = Html.Partial("_Saudacao");
+            }
+        </div>
+        <div>
+            @{ 
+                // não retornar, apenas inclui diretamente essa view no html
+                Html.RenderPartial("_Saudacao");            
+            }
+        </div>
+
+        <div>
+            <a href="@Url.Action("Index", "Home")"> About</a>
+        </div>
+    }
+}
