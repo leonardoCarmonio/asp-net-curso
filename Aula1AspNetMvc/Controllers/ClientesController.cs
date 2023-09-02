@@ -17,7 +17,7 @@ namespace Aula1AspNetMvc.Controllers
 
         [OutputCache(Duration = 30, VaryByParam = "id")]
         // Faz um cache do request, enquanto a duração não passar, o request não é chamado
-        public ActionResult Teste2(int id)
+        public ActionResult Teste2()
         {
             return Content(DateTime.Now.ToString());
 
@@ -44,39 +44,23 @@ namespace Aula1AspNetMvc.Controllers
             return View(db.Cliente.ToList());
         }
 
-        // GET: Clientes
         [HttpGet]
-        public ActionResult Index()
-        {
-            return View(db.Cliente.ToList());
-        }
+        public ActionResult Index() => View(db.Cliente.ToList());
 
-        // GET: Clientes/Details/5
         [HttpGet]
         public ActionResult Details(int? id)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+            if (id is null)  return new HttpStatusCodeResult(HttpStatusCode.BadRequest,"Recurso não poder ser encontrado.");
+
             Cliente cliente = db.Cliente.Find(id);
-            if (cliente == null)
-            {
-                return HttpNotFound();
-            }
+            if (cliente is null) return HttpNotFound("Recurso não encontrado.");
+
             return View(cliente);
         }
 
-        // GET: Clientes/Create
         [HttpGet]
-        public ActionResult Create()
-        {
-            return View();
-        }
+        public ActionResult Create() => View();
 
-        // POST: Clientes/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,Nome,SobreNome,Email")] Cliente cliente)
@@ -99,55 +83,47 @@ namespace Aula1AspNetMvc.Controllers
             return View(cliente);
         }
 
-        // GET: Clientes/Edit/5
         [HttpGet]
         public ActionResult Edit(int? id)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+            if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            
             Cliente cliente = db.Cliente.Find(id);
-            if (cliente == null)
-            {
-                return HttpNotFound();
-            }
+            if (cliente == null) return HttpNotFound("Recurso não encontrado.");
+
             return View(cliente);
         }
 
-        // POST: Clientes/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Nome,SobreNome,DataCadastro")] Cliente cliente)
+        public ActionResult Edit([Bind(Include = "Id,Nome,Email,SobreNome")] Cliente cliente)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(cliente).State = EntityState.Modified;
+                var clienteAtualizacao = db.Cliente.Find(cliente.Id);
+                if (clienteAtualizacao is null) return HttpNotFound("Recurso não encontrado.");
+
+                clienteAtualizacao.Email = cliente.Email;
+                clienteAtualizacao.Nome = cliente.Nome;
+                clienteAtualizacao.SobreNome = cliente.SobreNome;
+
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
             return View(cliente);
         }
 
-        // GET: Clientes/Delete/5
         [HttpGet]
         public ActionResult Delete(int? id)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+            if (id is null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            
             Cliente cliente = db.Cliente.Find(id);
-            if (cliente == null)
-            {
-                return HttpNotFound();
-            }
+            if (cliente is null) HttpNotFound("Recurso não encontrado.");
+
             return View(cliente);
         }
 
-        // POST: Clientes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
